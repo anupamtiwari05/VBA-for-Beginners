@@ -1,0 +1,26 @@
+'Put below lines in Workbook Open event
+Private Sub Workbook_Open()
+    ReadReports 'This macro will execute as soon as workbook opens
+End Sub
+
+'Put below code in a module
+Sub Reports(tsk As String)
+    Dim Msg As VbMsgBoxResult
+    
+    Msg = MsgBox(tsk & " is about to run." & vbNewLine & _
+        "Do you like to snooze?", vbQuestion + vbYesNo, tsk)
+    
+    If Msg = vbYes Then
+        Application.OnTime Now + TimeSerial(0, 0, 10), "'Reports""" & tsk & """'"
+    End If
+End Sub
+
+Sub ReadReports()
+    Lr = Cells(Rows.Count, 1).End(xlUp).Row
+    'Below line reads day, time and task from activesheet (col A, B and C respectively)
+		For i = 2 To Lr
+        If Cells(i, 1).Value = Format(Date, "ddd") Then
+            Application.OnTime Cells(i, 2).Value, "'Reports""" & Cells(i, 3).Value & """'"
+        End If
+    Next
+End Sub
